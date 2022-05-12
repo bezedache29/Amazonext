@@ -11,19 +11,19 @@ datasource db {
 }
 
 model User {
-  id          Int         @id @default(autoincrement())
-  createdAt   DateTime    @default(now())
-  email       String      @unique
-  pseudo      String      @unique
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  email       String        @unique
+  pseudo      String        @unique
   password    String
-  lastname    String
-  firstname   String
-  telephone   String
-  mobile      String
-  paymentType String
-  payment     Payment     @relation(fields: [paymentType], references: [type])
-  role        Role        @relation(fields: [roleName], references: [name])
-  roleName    String
+  lastname    String?
+  firstname   String?
+  telephone   String?
+  mobile      String?
+  paymentType String?
+  payment     Payment?      @relation(fields: [paymentType], references: [type])
+  role        Role          @relation(fields: [roleName], references: [name])
+  roleName    String        @default("CUSTOMER")
   sessions    SessionCart[]
   addresses   Address[]
   articles    Article[]

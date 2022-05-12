@@ -32,8 +32,14 @@ a {
   -webkit-line-clamp: 4;
 }
 .h-80 {
-  height: 80px;
+  height: 80px!important;
 }
 .mt-80 {
-  margin-top: 80px;
+  margin-top: 80px!important;
+}
+.mt-150 {
+  margin-top: 150px!important;
+}
+.w-100 {
+  width: 100%!important;
 }

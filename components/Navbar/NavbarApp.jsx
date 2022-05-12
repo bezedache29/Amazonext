@@ -61,9 +61,11 @@ export default function Navbar() {
           <div className="navbar-end">
             <div className="navbar-item">
               <div className="buttons">
-                <a className="button is-primary">
-                  <strong>S'enregistrer</strong>
-                </a>
+                <Link href={'/auth/register'}>
+                  <a className="button is-primary">
+                    <strong>S'enregistrer</strong>
+                  </a>
+                </Link>
                 <a className="button is-light">
                   Se connecter
                 </a>

@@ -5,12 +5,12 @@ CREATE TABLE `User` (
     `email` VARCHAR(191) NOT NULL,
     `pseudo` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `lastname` VARCHAR(191) NOT NULL,
-    `firstname` VARCHAR(191) NOT NULL,
-    `telephone` VARCHAR(191) NOT NULL,
-    `mobile` VARCHAR(191) NOT NULL,
-    `paymentType` VARCHAR(191) NOT NULL,
-    `roleName` VARCHAR(191) NOT NULL,
+    `lastname` VARCHAR(191) NULL,
+    `firstname` VARCHAR(191) NULL,
+    `telephone` VARCHAR(191) NULL,
+    `mobile` VARCHAR(191) NULL,
+    `paymentType` VARCHAR(191) NULL,
+    `roleName` VARCHAR(191) NOT NULL DEFAULT 'CUSTOMER',
 
     UNIQUE INDEX `User_email_key`(`email`),
     UNIQUE INDEX `User_pseudo_key`(`pseudo`),
@@ -133,7 +133,7 @@ CREATE TABLE `CategoriesOnArticle` (
 ALTER TABLE `User` ADD CONSTRAINT `User_roleName_fkey` FOREIGN KEY (`roleName`) REFERENCES `Role`(`name`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_paymentType_fkey` FOREIGN KEY (`paymentType`) REFERENCES `Payment`(`type`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `User` ADD CONSTRAINT `User_paymentType_fkey` FOREIGN KEY (`paymentType`) REFERENCES `Payment`(`type`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Address` ADD CONSTRAINT `Address_userName_fkey` FOREIGN KEY (`userName`) REFERENCES `User`(`pseudo`) ON DELETE RESTRICT ON UPDATE CASCADE;
