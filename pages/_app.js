@@ -1,5 +1,5 @@
 import '../styles/globals.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bulma/css/bulma.min.css'
 import Container from '../components/Container/ContainerApp'
 
 function MyApp({ Component, pageProps }) {
