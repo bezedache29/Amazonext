@@ -14,3 +14,26 @@ a {
 * {
   box-sizing: border-box;
 }
+
+/* .is-truncated {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+} */
+.is-truncated {
+  overflow:hidden;
+  max-height: 8rem;
+  -webkit-box-orient: vertical;
+  display: block;
+  display: -webkit-box;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 4;
+}
+.h-80 {
+  height: 80px;
+}
+.mt-80 {
+  margin-top: 80px;
+}

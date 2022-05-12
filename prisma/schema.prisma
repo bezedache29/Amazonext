@@ -54,13 +54,14 @@ model Article {
   createdAt   DateTime   @default(now())
   title       String
   image       String
-  price       Decimal    @db.Decimal(10, 2)
+  description String     @db.Text()
+  price       String
   userName    String
   user        User       @relation(fields: [userName], references: [pseudo])
   quantity    Int
   reviews     Review[]
   comments    Comment[]
-  categories   CategoriesOnArticle[]
+  categories  CategoriesOnArticle[]
   carts       Cart[]
 }
 
@@ -88,7 +89,7 @@ model Cart {
   articleId   Int
   article     Article       @relation(fields: [articleId], references: [id])
   quantity    Int
-  price       Decimal       @db.Decimal(10, 2)
+  price       String
   userName    String
   user        User          @relation(fields: [userName], references: [pseudo])
 }

@@ -1,14 +1,14 @@
 import Image from "next/image"
 import HeadApp from "../components/Head/HeadApp"
+import Button from '@mui/material/Button'
+import Layout from "../template/Layout"
 
 const logo = require('../assets/icons/logo.png')
 
 export default function Home() {
   return (
-    <>
-      <HeadApp title='Accueil' />
-
-      <div className="is-flex is-flex-direction-column is-justify-content-center is-align-items-center container">
+    <Layout head='Accueil'>
+      <div className="is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
         <Image src={logo} width="369" height="167" />
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit distinctio, sequi adipisci optio dolorum amet sunt? Blanditiis, error illo iusto suscipit quia, ad, magni similique rerum unde perspiciatis doloremque consequuntur.
         Dolore quas sapiente perferendis assumenda dolor. Quam adipisci expedita dignissimos, dolore quae molestiae eligendi laudantium quas atque quibusdam praesentium? Et ad unde molestiae ducimus aperiam earum culpa, ratione modi iusto?
@@ -26,6 +26,6 @@ export default function Home() {
         Magnam nisi officia obcaecati, at provident ratione velit dolore. Corporis quos voluptatibus consectetur, maxime molestias rerum corrupti veniam voluptate est. A ipsum provident pariatur iure voluptates error natus accusamus tenetur.
         Nisi, laudantium laboriosam quisquam molestias magnam dolorem nulla, commodi error, amet odit nam eveniet nobis. Minus voluptas temporibus, iusto laudantium commodi itaque doloribus, labore numquam, quia veritatis fugit odit necessitatibus?</p>
       </div>
-    </>
+    </Layout>
   )
 }

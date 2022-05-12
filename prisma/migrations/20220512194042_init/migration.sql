@@ -45,7 +45,8 @@ CREATE TABLE `Article` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `title` VARCHAR(191) NOT NULL,
     `image` VARCHAR(191) NOT NULL,
-    `price` DECIMAL(10, 2) NOT NULL,
+    `description` TEXT NOT NULL,
+    `price` VARCHAR(191) NOT NULL,
     `userName` VARCHAR(191) NOT NULL,
     `quantity` INTEGER NOT NULL,
 
@@ -80,7 +81,7 @@ CREATE TABLE `Cart` (
     `sessionId` INTEGER NOT NULL,
     `articleId` INTEGER NOT NULL,
     `quantity` INTEGER NOT NULL,
-    `price` DECIMAL(10, 2) NOT NULL,
+    `price` VARCHAR(191) NOT NULL,
     `userName` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)

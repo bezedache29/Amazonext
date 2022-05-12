@@ -8,7 +8,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="navbar" role="navigation" aria-label="main navigation">
+      <nav className="navbar is-fixed-top pl-6" role="navigation" aria-label="main navigation">
         <div className="navbar-brand">
           <div className='is-flex is-flex-direction-column is-justify-content-center is-align-items-center'>
             <Image src={logo} width="112" height="50" />

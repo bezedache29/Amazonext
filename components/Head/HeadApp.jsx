@@ -1,7 +1,7 @@
 import React from 'react'
 import Head from "next/head"
 
-export default function HeadApp({ title }) {
+export default function HeadApp({ title = '' }) {
   return (
     <Head>
       <meta name="description" content={'AmazoNext' + title} />
