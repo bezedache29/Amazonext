@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  email       String     @unique
+  pseudo      String     @unique
+  password    String
+  lastname    String
+  firstname   String
+  addresses   Address[]
+  articles    Article[]
+  reviews     Review[]
+  comments    Comment[]
+  carts       Cart[]
+}
+
+model Address {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  content     String
+  city        String
+  zipCode     Int
+  userName    String
+  user        User       @relation(fields: [userName], references: [pseudo])
+}
+
+model Article {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  title       String
+  image       String
+  price       Decimal    @db.Decimal(10, 2)
+  userName    String
+  user        User       @relation(fields: [userName], references: [pseudo])
+  reviews     Review[]
+  comments    Comment[]
+  categoies   CategoriesOnArticle[]
+  carts       ArticlesOnCart[]
+}
+
+model Cart {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  amount      Decimal    @db.Decimal(10,2)
+  userName    String
+  user        User       @relation(fields: [userName], references: [pseudo])
+  articles    ArticlesOnCart[]
+}
+
+model Review {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  score       Int
+  articleId   Int
+  article     Article    @relation(fields: [articleId], references: [id])
+  userName    String
+  user        User       @relation(fields: [userName], references: [pseudo])
+}
+
+model Comment {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  message     String
+  userName    String
+  user        User       @relation(fields: [userName], references: [pseudo])
+  articleId   Int
+  article     Article    @relation(fields: [articleId], references: [id])
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  name        String     @unique
+  articles    CategoriesOnArticle[]
+}
+
+model CategoriesOnArticle {
+  articleId     Int
+  article       Article     @relation(fields: [articleId], references: [id])
+  categoryName  String
+  category      Category    @relation(fields: [categoryName], references: [name])
+  assignedAt    DateTime    @default(now())
+
+  @@id([articleId, categoryName])
+}
+
+model ArticlesOnCart {
+  articleId     Int
+  article       Article     @relation(fields: [articleId], references: [id])
+  cartId        Int
+  cart          Cart        @relation(fields: [cartId], references: [id])
+  assignedAt    DateTime    @default(now())
+
+   @@id([articleId, cartId])
+}
