@@ -3,12 +3,20 @@ import categories from './seeders/categories.js'
 import users from './seeders/users.js'
 import articles from './seeders/articles.js'
 import addresses from './seeders/addresses.js'
+import roles from './seeders/roles.js'
+import payments from './seeders/payments.js'
 const { PrismaClient } = Prisma
 
 
 const prisma = new PrismaClient()
 
 async function main() {
+    await prisma.payment.createMany({
+      data: payments
+    })
+    await prisma.role.createMany({
+      data: roles
+    })
     await prisma.category.createMany({
       data: categories
     })

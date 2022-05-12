@@ -11,13 +11,20 @@ datasource db {
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  createdAt   DateTime   @default(now())
-  email       String     @unique
-  pseudo      String     @unique
+  id          Int         @id @default(autoincrement())
+  createdAt   DateTime    @default(now())
+  email       String      @unique
+  pseudo      String      @unique
   password    String
   lastname    String
   firstname   String
+  telephone   String
+  mobile      String
+  paymentType String
+  payment     Payment     @relation(fields: [paymentType], references: [type])
+  role        Role        @relation(fields: [roleName], references: [name])
+  roleName    String
+  sessions    SessionCart[]
   addresses   Address[]
   articles    Article[]
   reviews     Review[]
@@ -25,10 +32,17 @@ model User {
   carts       Cart[]
 }
 
+model Role {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  name        String     @unique
+  users       User[]
+}
+
 model Address {
   id          Int        @id @default(autoincrement())
   createdAt   DateTime   @default(now())
-  content     String
+  address     String
   city        String
   zipCode     Int
   userName    String
@@ -43,25 +57,47 @@ model Article {
   price       Decimal    @db.Decimal(10, 2)
   userName    String
   user        User       @relation(fields: [userName], references: [pseudo])
+  quantity    Int
   reviews     Review[]
   comments    Comment[]
   categoies   CategoriesOnArticle[]
-  carts       ArticlesOnCart[]
+  carts       Cart[]
+}
+
+model Payment {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  type        String     @unique
+  users       User[]
+}
+
+model SessionCart {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  session     String     @unique
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+  carts       Cart[]
 }
 
 model Cart {
-  id          Int        @id @default(autoincrement())
-  createdAt   DateTime   @default(now())
-  amount      Decimal    @db.Decimal(10,2)
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  sessionId   Int
+  session     SessionCart   @relation(fields: [sessionId], references: [id])
+  articleId   Int
+  article     Article       @relation(fields: [articleId], references: [id])
+  quantity    Int
+  price       Decimal       @db.Decimal(10, 2)
   userName    String
-  user        User       @relation(fields: [userName], references: [pseudo])
-  articles    ArticlesOnCart[]
+  user        User          @relation(fields: [userName], references: [pseudo])
 }
 
 model Review {
   id          Int        @id @default(autoincrement())
   createdAt   DateTime   @default(now())
   score       Int
+  message     String
   articleId   Int
   article     Article    @relation(fields: [articleId], references: [id])
   userName    String
@@ -93,14 +129,4 @@ model CategoriesOnArticle {
   assignedAt    DateTime    @default(now())
 
   @@id([articleId, categoryName])
-}
-
-model ArticlesOnCart {
-  articleId     Int
-  article       Article     @relation(fields: [articleId], references: [id])
-  cartId        Int
-  cart          Cart        @relation(fields: [cartId], references: [id])
-  assignedAt    DateTime    @default(now())
-
-   @@id([articleId, cartId])
 }

@@ -16,7 +16,7 @@ export default function Navbar() {
                 <Link href={'/'}><a className="nav-link">Accueil</a></Link>
               </li>
               <li className="nav-item">
-                <Link href={'/articles'}><a className="nav-link">Articles</a></Link>
+                <Link href={'/admin'}><a className="nav-link">Admin</a></Link>
               </li>
             </ul>
           </div>
