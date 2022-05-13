@@ -25,6 +25,7 @@
     "cookies-next": "^2.0.4",
     "dotenv": "^16.0.1",
     "easy-peasy": "^5.0.4",
+    "env-cmd": "^10.1.0",
     "formik": "^2.2.9",
     "framer-motion": "^6.3.3",
     "joi": "^17.6.0",

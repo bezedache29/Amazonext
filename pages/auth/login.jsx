@@ -5,29 +5,26 @@ import Layout from '../../template/Layout'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
+import { setCookies } from 'cookies-next'
 
 export default function Register() {
 
-  const [emailError, setEmailError] = useState(false)
-  const [pseudoError, setPseudoError] = useState(false)
+  const [error, setError] = useState(false)
 
   const router = useRouter()
 
   const formik = useFormik({
     initialValues: {
       email: '',
-      pseudo: '',
       password: '',
-      passwordConfirm: ''
     },
     onSubmit: async (values, { resetForm }) => {
       const data = {
         email: values.email,
-        pseudo: values.pseudo,
         password: values.password
       }
       try {
-        await fetch(`${process.env.REACT_APP_URL_API}/auth/register`, {
+        await fetch(`${process.env.REACT_APP_URL_API}/auth/login`, {
           method: 'POST',
           body: JSON.stringify(data),
           headers: {
@@ -37,17 +34,15 @@ export default function Register() {
           .then(res => res.json())
           .then(response => {
             console.log(response)
-            setEmailError(false)
-            setPseudoError(false)
+            setError(false)
             if (response.message) {
-              if (response.message === "L'email existe déjà") {
-                setEmailError(response.message)
-              } else {
-                setPseudoError(response.message)
+              if (response.message === 'Invalid Email or Password.') {
+                setError('Mauvais Email et/ou Mot de passe')
               }
             } else {
               resetForm()
-              router.push('/auth/login')
+              setCookies('jwt', response.token)
+              router.push('/articles')
             }
           })
       } catch(err) {
@@ -56,9 +51,7 @@ export default function Register() {
     },
     validationSchema: yup.object({
       email: yup.string().email().min(5, "trop petit").max(40, "trop long!").required("L'email est obligatoire"),
-      pseudo: yup.string().min(2, "trop petit").max(30, "trop long!").required("Le pseudo est obligatoire"),
       password: yup.string().min(6, "trop petit").max(30, "trop long!").required("Le mot de passe est obligatoire"),
-      passwordConfirm: yup.string().min(6, "trop petit").max(30, "trop long!").required("La confirmation de mot de passe est obligatoire").oneOf([yup.ref("password"), null], "Le mot de passe de confirmation ne correspond pas"),
     })
   })
 
@@ -66,11 +59,11 @@ export default function Register() {
     <Layout head="S'enregistrer">
       <div className="columns mt-150">
         <div className="column is-half mx-auto box">
-          <h1 className="has-text-centered is-size-1 has-text-weight-bold">Enregistrement</h1>
+          <h1 className="has-text-centered is-size-1 has-text-weight-bold">Connexion</h1>
           <form onSubmit={formik.handleSubmit} className="is-flex is-flex-direction-column mt-5 w-100">
 
             <div className="columns">
-              <div className="field column is-half">
+              <div className="field column is-full">
                 <InputApp 
                   type="email"
                   label="Email"
@@ -78,26 +71,13 @@ export default function Register() {
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   error={formik.errors.email ? formik.errors.email : false}
-                  otherError={emailError}
+                  otherError={error}
                   name="email"
                 />
               </div>
-              <div className="field column is-half">
-                <InputApp 
-                  type="text"
-                  label="Pseudo"
-                  placeholder="Entrez votre pseudo"
-                  value={formik.values.pseudo}
-                  onChange={formik.handleChange}
-                  error={formik.errors.pseudo ? formik.errors.pseudo : false}
-                  otherError={pseudoError}
-                  name="pseudo"
-                />
-              </div>
             </div>
-
             <div className="columns">
-              <div className="field column is-half">
+              <div className="field column is-full">
                 <InputApp 
                   type="password"
                   label="Mot de passe"
@@ -105,26 +85,17 @@ export default function Register() {
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   error={formik.errors.password ? formik.errors.password : false}
+                  otherError={error}
                   name="password"
-                />
-              </div>
-              <div className="field column is-half">
-                <InputApp 
-                  type="password"
-                  label="Confirmez le mot de passe"
-                  placeholder="Confirmez le mot de passe"
-                  value={formik.values.passwordConfirm}
-                  onChange={formik.handleChange}
-                  error={formik.errors.passwordConfirm ? formik.errors.passwordConfirm : false}
-                  name="passwordConfirm"
                 />
               </div>
             </div>
 
-            <AuthButton>S'enregistrer</AuthButton>
+            <AuthButton>Se connecter</AuthButton>
           </form>
         </div>
       </div>
     </Layout>
   )
 }
+

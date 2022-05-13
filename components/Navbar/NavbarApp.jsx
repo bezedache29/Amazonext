@@ -1,11 +1,27 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from "next/image"
-import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Avatar, Menu, MenuButton, MenuItem, MenuList, useDisclosure, Wrap, WrapItem } from '@chakra-ui/react'
+import { checkCookies, removeCookies } from 'cookies-next'
+import ModalApp from '../Modal/ModalApp'
 
 const logo = require('../../assets/icons/logo.png')
 
 export default function Navbar() {
+
+  const [isConnected, setIsConnected] = useState(false)
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  useEffect(() => {
+    checkCookies('jwt') ? setIsConnected(true) : setIsConnected(false)
+  })
+
+  const logout = () => {
+    onClose()
+    removeCookies('jwt')
+    // Dispatch le user a vide
+  }
 
   return (
     <>
@@ -29,13 +45,9 @@ export default function Navbar() {
               </a>
             </Link>
 
-            <a className="navbar-item">
-              Other
-            </a>
-
             <Menu className="navbar-item">
               <MenuButton className="navbar-link">
-                Articles
+                Boutique
               </MenuButton>
               <MenuList>
                 <Link href={'/articles'}>
@@ -49,48 +61,53 @@ export default function Navbar() {
               </MenuList>
             </Menu>
 
-            {/* <div className="navbar-item has-dropdown is-hoverable">
-              <a className="navbar-link">
-                
+            {isConnected && (
+              <a className="navbar-item">
+                Ajouter un article
               </a>
+            )}
 
-              <div className="navbar-dropdown">
-                <Link href={'/articles'}>
-                  <a className="navbar-item">
-                    Tous
-                  </a>
-                </Link>
-                
-                <a className="navbar-item">
-                  Ordinateurs
-                </a>
-                <a className="navbar-item">
-                  Voitures
-                </a>
-                <hr className="navbar-divider" />
-                <a className="navbar-item">
-                  Autre
-                </a>
-              </div>
-            </div> */}
           </div>
 
           <div className="navbar-end">
-            <div className="navbar-item">
-              <div className="buttons">
-                <Link href={'/auth/register'}>
-                  <a className="button is-primary">
-                    <strong>S'enregistrer</strong>
-                  </a>
-                </Link>
-                <a className="button is-light">
-                  Se connecter
-                </a>
+            {isConnected ? (
+              <div className="mt-2 mr-3">
+                <Menu>
+                  <MenuButton>
+                    <Avatar name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem>Voir mon profil</MenuItem>
+                    <MenuItem>Voir mes commandes</MenuItem>
+                    <MenuItem>Voir mes produits</MenuItem>
+                    <hr className="navbar-divider" />
+                    <MenuItem onClick={onOpen}>Se déconnecter</MenuItem>
+                  </MenuList>
+                </Menu>
               </div>
-            </div>
+            ) : (
+              <div className="navbar-item">
+                <div className="buttons">
+                  <Link href={'/auth/register'}>
+                    <a className="button is-primary">
+                      <strong>S'enregistrer</strong>
+                    </a>
+                  </Link>
+                  <Link href={'/auth/login'}>
+                    <a className="button is-light">
+                      Se connecter
+                    </a>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </nav>
+
+      {/* Modal Logout */}
+      <ModalApp isOpen={isOpen} onClose={onClose} logout={logout} />
+
     </>
   )
 }
