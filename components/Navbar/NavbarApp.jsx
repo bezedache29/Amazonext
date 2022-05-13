@@ -62,9 +62,11 @@ export default function Navbar() {
             </Menu>
 
             {isConnected && (
-              <a className="navbar-item">
-                Ajouter un article
-              </a>
+              <Link href={'/articles/create'}>
+                <a className="navbar-item">
+                  Ajouter un article
+                </a>
+              </Link>
             )}
 
           </div>

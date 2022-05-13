@@ -53,12 +53,12 @@ model Article {
   id          Int        @id @default(autoincrement())
   createdAt   DateTime   @default(now())
   title       String
-  image       String
+  image       String?
   description String     @db.Text()
   price       String
   userName    String
   user        User       @relation(fields: [userName], references: [pseudo])
-  quantity    Int
+  quantity    Int        @default(1)
   reviews     Review[]
   comments    Comment[]
   categories  CategoriesOnArticle[]

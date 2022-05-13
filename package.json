@@ -22,6 +22,7 @@
     "@types/react": "^18.0.9",
     "bcrypt": "^5.0.1",
     "bulma": "^0.9.4",
+    "chakra-ui-autocomplete": "^1.4.5",
     "cookies-next": "^2.0.4",
     "dotenv": "^16.0.1",
     "easy-peasy": "^5.0.4",

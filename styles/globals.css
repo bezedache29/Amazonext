@@ -43,3 +43,13 @@ a {
 .w-100 {
   width: 100%!important;
 }
+.preview {
+  height: 300px;
+  width: 200px;
+  overflow: hidden;
+}
+.preview-image {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}

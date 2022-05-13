@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function InputApp({ type, name, label, placeholder, value, onChange, error, otherError }) {
+export default function InputApp({ type, name, label, placeholder, value, onChange, error, otherError, autoFocus }) {
   return (
     <>
       <label className="label">{label}</label>
@@ -12,6 +12,7 @@ export default function InputApp({ type, name, label, placeholder, value, onChan
           value={value}
           onChange={onChange}
           name={name}
+          autoFocus={autoFocus}
         />
         {error && <p className="help is-danger">{error}</p>}
         {otherError && <p className="help is-danger">{otherError}</p>}

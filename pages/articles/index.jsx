@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import HeadApp from '../../components/Head/HeadApp'
 import Layout from '../../template/Layout'
 
 export default function Articles({ articlesList }) {
@@ -68,7 +67,7 @@ export default function Articles({ articlesList }) {
 }
 
 export async function getStaticProps() {
-  const data = await fetch('http://localhost:3000/api/articles/getAllArticles')
+  const data = await fetch(`${process.env.REACT_APP_URL_API}/articles/getAllArticles`)
   const articlesList = await data.json()
 
   return {
