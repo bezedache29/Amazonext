@@ -8,6 +8,36 @@ import * as yup from 'yup'
 
 export default function Register() {
 
+  const [emailError, setEmailError] = useState('')
+  const [pseudoError, setPseudoError] = useState('')
+
+  const fetchRegister = async (data) => {
+    try {
+      await fetch('http://localhost:3000/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          "content-type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(response => {
+          console.log(response)
+          if (response.message) {
+            if (response.message === "L'email existe déjà") {
+              setEmailError(response.message)
+            } else {
+              setPseudoError(response.message)
+            }
+          } else {
+            resetForm()
+          }
+        })
+    } catch(err) {
+      console.log(err)
+    }
+  }
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -21,8 +51,7 @@ export default function Register() {
         pseudo: values.pseudo,
         password: values.password
       }
-      console.log(data)
-      // resetForm()
+      
     },
     validationSchema: yup.object({
       email: yup.string().email().min(5, "trop petit").max(40, "trop long!").required("L'email est obligatoire"),

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 import Image from "next/image"
+import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 
 const logo = require('../../assets/icons/logo.png')
 
@@ -32,9 +33,25 @@ export default function Navbar() {
               Other
             </a>
 
-            <div className="navbar-item has-dropdown is-hoverable">
-              <a className="navbar-link">
+            <Menu className="navbar-item">
+              <MenuButton className="navbar-link">
                 Articles
+              </MenuButton>
+              <MenuList>
+                <Link href={'/articles'}>
+                  <MenuItem>Tous les articles</MenuItem>
+                </Link>
+                <hr className="navbar-divider" />
+                <MenuItem>Ordinateurs</MenuItem>
+                <MenuItem>Voitures</MenuItem>
+                <MenuItem>Livres</MenuItem>
+                <MenuItem>Meubles</MenuItem>
+              </MenuList>
+            </Menu>
+
+            {/* <div className="navbar-item has-dropdown is-hoverable">
+              <a className="navbar-link">
+                
               </a>
 
               <div className="navbar-dropdown">
@@ -55,7 +72,7 @@ export default function Navbar() {
                   Autre
                 </a>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="navbar-end">
