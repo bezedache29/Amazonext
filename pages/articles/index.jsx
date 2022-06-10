@@ -1,13 +1,36 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../../template/Layout'
+import { Alert, AlertIcon } from '@chakra-ui/react'
 
 export default function Articles({ articlesList }) {
-  console.log(articlesList)
+
+  const [alert, setAlert] = useState(false)
+
+  useEffect(() => {
+    const addArtcile = localStorage.getItem('addArticle')
+    if (addArtcile && addArtcile !== '') {
+      setAlert(`Votre article ${addArtcile} a bien été ajoutée !`)
+      localStorage.removeItem('addArticle')
+    }
+
+    let timer = setTimeout(() => {
+      setAlert(false);
+    }, 5000);
+
+    return () => { clearTimeout(timer) };
+  }, [])
+
   return (
     <Layout head='Articles'>
       <h1 className="mt-80 has-text-centered is-size-1 has-text-weight-bold">Liste des Artciles</h1>
+      {alert && (
+        <Alert status='success'>
+          <AlertIcon />
+          {alert}
+        </Alert>
+      )}
       <div className="columns mt-4 is-flex is-flex-wrap-wrap">
         {articlesList.length > 0 ? articlesList.map(article => (
           <div className="column is-one-quarter" key={article.id}>
@@ -15,7 +38,7 @@ export default function Articles({ articlesList }) {
               <div className="card-image">
                 <figure className="image is-4by3">
                   <Image 
-                    src={require(`../../assets/images/articles/${article.image}`)}
+                    src={article.image !== null ? require(`../../public/images/articles/${article.image}`) : require('../../public/images/articles/default.jpg')}
                     layout='fill'
                     objectFit='contain'
                     alt={`Image de ${article.title}`}
@@ -44,7 +67,11 @@ export default function Articles({ articlesList }) {
                     {article.description}
                   </p>
                   <div className="is-flex">
-                    <a href="#" className='mx-1'>#css</a> <a href="#" className='mx-1'>#responsive</a>
+                    {article.categories.length > 0 ? article.categories.map((cat, index) => (
+                      <a href="#" className='mx-1' key={index}>#{cat.categoryName}</a>
+                    )) : (
+                      <span>Pas de categories</span>
+                    )}
                   </div>
                   <div className="mt-2 is-flex is-align-items-center">
                     <p className='m-0 is-size-3'>{article.price} €</p>

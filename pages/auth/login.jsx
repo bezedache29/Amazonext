@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import AuthButton from '../../components/AuthButton/AuthButton'
 import InputApp from '../../components/Input/InputApp'
 import Layout from '../../template/Layout'
@@ -24,27 +24,27 @@ export default function Register() {
         password: values.password
       }
       try {
-        await fetch(`${process.env.REACT_APP_URL_API}/auth/login`, {
+        const res = await fetch(`${process.env.REACT_APP_URL_API}/auth/login`, {
           method: 'POST',
           body: JSON.stringify(data),
           headers: {
             "content-type": "application/json"
           }
         })
-          .then(res => res.json())
-          .then(response => {
-            console.log(response)
-            setError(false)
-            if (response.message) {
-              if (response.message === 'Invalid Email or Password.') {
-                setError('Mauvais Email et/ou Mot de passe')
-              }
-            } else {
-              resetForm()
-              setCookies('jwt', response.token)
-              router.push('/articles')
-            }
-          })
+        const response = await res.json()
+
+        console.log(response)
+        setError(false)
+
+        if (response.message) {
+          if (response.message === 'Invalid Email or Password.') {
+            setError('Mauvais Email et/ou Mot de passe')
+          }
+        } else {
+          resetForm()
+          setCookies('jwt', response.token)
+          router.push('/articles')
+        }
       } catch(err) {
         console.log(err)
       }
@@ -70,7 +70,7 @@ export default function Register() {
                   placeholder="Entrez votre email"
                   value={formik.values.email}
                   onChange={formik.handleChange}
-                  error={formik.errors.email ? formik.errors.email : false}
+                  error={formik.touched.email && formik.errors.email ? formik.errors.email : false}
                   otherError={error}
                   name="email"
                 />
@@ -84,7 +84,7 @@ export default function Register() {
                   placeholder="Entrez votre mot de passe"
                   value={formik.values.password}
                   onChange={formik.handleChange}
-                  error={formik.errors.password ? formik.errors.password : false}
+                  error={formik.touched.password && formik.errors.password ? formik.errors.password : false}
                   otherError={error}
                   name="password"
                 />

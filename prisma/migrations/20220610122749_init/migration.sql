@@ -44,11 +44,11 @@ CREATE TABLE `Article` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `title` VARCHAR(191) NOT NULL,
-    `image` VARCHAR(191) NOT NULL,
+    `image` VARCHAR(191) NULL,
     `description` TEXT NOT NULL,
     `price` VARCHAR(191) NOT NULL,
     `userName` VARCHAR(191) NOT NULL,
-    `quantity` INTEGER NOT NULL,
+    `quantity` INTEGER NOT NULL DEFAULT 1,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

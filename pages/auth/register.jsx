@@ -27,29 +27,29 @@ export default function Register() {
         password: values.password
       }
       try {
-        await fetch(`${process.env.REACT_APP_URL_API}/auth/register`, {
+        const res = await fetch(`${process.env.REACT_APP_URL_API}/auth/register`, {
           method: 'POST',
           body: JSON.stringify(data),
           headers: {
             "content-type": "application/json"
           }
         })
-          .then(res => res.json())
-          .then(response => {
-            console.log(response)
-            setEmailError(false)
-            setPseudoError(false)
-            if (response.message) {
-              if (response.message === "L'email existe déjà") {
-                setEmailError(response.message)
-              } else {
-                setPseudoError(response.message)
-              }
-            } else {
-              resetForm()
-              router.push('/auth/login')
-            }
-          })
+        const response = await res.json()
+        console.log(response)
+
+        setEmailError(false)
+        setPseudoError(false)
+        
+        if (response.message) {
+          if (response.message === "L'email existe déjà") {
+            setEmailError(response.message)
+          } else {
+            setPseudoError(response.message)
+          }
+        } else {
+          resetForm()
+          router.push('/auth/login')
+        }
       } catch(err) {
         console.log(err)
       }
@@ -77,7 +77,7 @@ export default function Register() {
                   placeholder="Entrez votre email"
                   value={formik.values.email}
                   onChange={formik.handleChange}
-                  error={formik.errors.email ? formik.errors.email : false}
+                  error={formik.touched.email && formik.errors.email ? formik.errors.email : false}
                   otherError={emailError}
                   name="email"
                 />
@@ -89,7 +89,7 @@ export default function Register() {
                   placeholder="Entrez votre pseudo"
                   value={formik.values.pseudo}
                   onChange={formik.handleChange}
-                  error={formik.errors.pseudo ? formik.errors.pseudo : false}
+                  error={formik.touched.pseudo && formik.errors.pseudo ? formik.errors.pseudo : false}
                   otherError={pseudoError}
                   name="pseudo"
                 />
@@ -104,7 +104,7 @@ export default function Register() {
                   placeholder="Entrez votre mot de passe"
                   value={formik.values.password}
                   onChange={formik.handleChange}
-                  error={formik.errors.password ? formik.errors.password : false}
+                  error={formik.touched.password && formik.errors.password ? formik.errors.password : false}
                   name="password"
                 />
               </div>
@@ -115,7 +115,7 @@ export default function Register() {
                   placeholder="Confirmez le mot de passe"
                   value={formik.values.passwordConfirm}
                   onChange={formik.handleChange}
-                  error={formik.errors.passwordConfirm ? formik.errors.passwordConfirm : false}
+                  error={formik.touched.passwordConfirm && formik.errors.passwordConfirm ? formik.errors.passwordConfirm : false}
                   name="passwordConfirm"
                 />
               </div>
