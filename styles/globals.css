@@ -31,6 +31,12 @@ a {
   text-overflow: ellipsis;
   -webkit-line-clamp: 4;
 }
+.truncate {
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .h-80 {
   height: 80px!important;
 }
@@ -42,6 +48,9 @@ a {
 }
 .w-100 {
   width: 100%!important;
+}
+.w-80 {
+  width: 80px;
 }
 .preview {
   height: 300px;
@@ -63,4 +72,13 @@ a {
 }
 .cursor-pointer {
   cursor: pointer;
+}
+.card {
+  height: 617.5px!important;
+}
+.card-content {
+  height: 100%!important;
+}
+.content {
+  height: 184px;
 }

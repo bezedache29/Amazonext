@@ -4,10 +4,10 @@ export const cartStore = {
 
   cartList: [],
   cartCount: 0,
+  total: 0,
 
-  addCart: action((state, payload) => {
-    console.log(payload)
-    state.cartList.push(payload);
+  loadCount: action((state, payload) => {
+    state.cartCount = payload
   }),
   incrementCartCount: action((state, payload) => {
     state.cartCount += 1
@@ -15,5 +15,11 @@ export const cartStore = {
   decrementCartCount: action((state, payload) => {
     state.cartCount -= 1
   }),
+  loadCart: action((state, payload) => {
+    state.cartList = payload
+  }),
+  addTotal: action((state, payload) => {
+    state.total = payload
+  })
 
 };

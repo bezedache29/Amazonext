@@ -1,14 +1,21 @@
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import Layout from '../../template/Layout'
-import { Alert, AlertIcon } from '@chakra-ui/react'
+import { Alert, AlertIcon, useToast } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useStoreActions } from 'easy-peasy'
+import useLocalStorage from '../../hooks/useLocalStorage'
 
 export default function Articles({ articlesList }) {
 
   const [alert, setAlert] = useState(false)
   const [panier, setPanier] = useState([])
+  const [total, setTotal] = useState(0)
+
+  const toast = useToast()
+
+  // HOOKS
+  const { addCartToLocalStorage, addTotalToLocalstorage } = useLocalStorage()
 
   // STORE
   const cartActions = useStoreActions((actions) => actions.cart)
@@ -32,69 +39,135 @@ export default function Articles({ articlesList }) {
     return () => { clearTimeout(timer) };
   }, [])
 
+  useEffect(() => {
+
+    // localStorage.removeItem('cart')
+    // localStorage.removeItem('count')
+    // localStorage.removeItem('total')
+
+    const cart = localStorage.getItem('cart')
+    if (cart) {
+      setPanier(JSON.parse(cart))
+      cartActions.loadCart(JSON.parse(cart))
+    }
+  }, [])
+
+  /**
+   * Permet de calculer le total des articles dans le panier
+   */
+  useEffect(() => {
+    let total = 0
+    let count = 0
+    panier.forEach(article => {
+      total += +article.price
+      count += +article.count
+    })
+    setTotal(total.toFixed(2))
+    addTotalToLocalstorage(total.toFixed(2))
+    cartActions.addTotal(total.toFixed(2))
+    cartActions.loadCount(count)
+  }, [panier])
+
   /**
    * Permet d'ajouter un produit au panier
    */
-  const addProduct = useCallback(id => {
+  const addProduct = (article => {
     const newPanier = [...panier]
     let update = false
     if (newPanier.length > 0) {
       newPanier.forEach((el, i) => {
-        if (el.id === id) {
+        if (el.id === article.id) {
           const data = {
-            id,
+            id: article.id,
+            title: article.title,
+            price: (+article.price + +el.price).toFixed(2),
+            image: article.image,
             count: el.count + 1
           }
           newPanier.splice(i, 1, data)
-          console.log('id ok', newPanier)
           update = true
         }
       })
 
       if (!update) {
         newPanier.push({
-          id,
+          id: article.id,
+          title: article.title,
+          price: (+article.price).toFixed(2),
+          image: article.image,
           count: 1
         })
-        console.log('add', newPanier)
       }
     } else {
       newPanier.push({
-        id,
+        id: article.id,
+        title: article.title,
+        price: (+article.price).toFixed(2),
+        image: article.image,
         count: 1
       })
     }
     setPanier(newPanier)
+    console.log('newPanier', newPanier)
+
+    // Envoie le panier au store
+    cartActions.loadCart(newPanier)
 
      // Increment le total de produit et le met dans le store
     cartActions.incrementCartCount()
+
+    // Ajoute le panier en Localstorage
+    addCartToLocalStorage(newPanier)
+
+    toast({
+      title: `Article ajouté au panier !`,
+      description: `Un exemplaire de ${article.title} a bien été ajouté au panier`,
+      status: 'success',
+      duration: 4000,
+      isClosable: true,
+    })
   })
 
   /**
    * Permet de supprimer un produit du panier
    */
-  const decreaseProduct = useCallback((id) => {
+  const decreaseProduct = ((article) => {
     const newPanier = [...panier]
     newPanier.forEach((el, i) => {
-      if (el.id === id) {
+      if (el.id === article.id) {
         if ((el.count - 1) === 0) {
           newPanier.splice(i, 1)
-          console.log(newPanier)
-          console.log(i)
         } else {
           const data = {
-            id,
+            id: article.id,
+            title: article.title,
+            price: (+el.price - +article.price).toFixed(2),
+            image: article.image,
             count: el.count - 1
           }
           newPanier.splice(i, 1, data)
-          console.log('id ok', newPanier)
         }
       }
     })
     setPanier(newPanier)
+    console.log('newPanier', newPanier)
+
+    // Envoie le panier au store
+    cartActions.loadCart(newPanier)
 
     // Decrement le total de produit et le met dans le store
     cartActions.decrementCartCount()
+
+    toast({
+      title: `Article retiré du panier !`,
+      description: `Un exemplaire de ${article.title} a bien été retiré du panier`,
+      status: 'success',
+      duration: 4000,
+      isClosable: true,
+    })
+
+    // Ajoute le panier en Localstorage
+    addCartToLocalStorage(newPanier)
   })
 
   return (
@@ -125,7 +198,7 @@ export default function Articles({ articlesList }) {
                   <h2 className='is-size-4 has-text-centered has-text-weight-bold '>{article.title}</h2>
                 </div>
                 <hr className='mt-2 mb-4'/>
-                <div className="media">
+                <div className="media ">
                   <div className="media-left">
                     <figure className="image is-32x32">
                       <img className='is-rounded' src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image" />
@@ -137,7 +210,7 @@ export default function Articles({ articlesList }) {
                   </div>
                 </div>
 
-                <div className="content">
+                <div className="content is-flex is-flex-direction-column">
                   <p className="is-truncated">
                     {article.description}
                   </p>
@@ -148,19 +221,19 @@ export default function Articles({ articlesList }) {
                       <span>Pas de categories</span>
                     )}
                   </div>
-                  <div className="mt-2 is-flex is-align-items-center">
-                    <p className='m-0 is-size-3'>{article.price} €</p>
+                  <div className="mt-auto is-flex is-align-items-center">
+                    <p className='m-0 is-size-3'>{(+article.price).toFixed(2)} €</p>
                     <div className='ml-auto is-flex is-align-items-center'>
 
                     {panier.length > 0 && panier.map((el, index) => (
                       el.id === article.id && (
                         <div className="is-flex is-align-items-center" key={index}>
-                          <div className='button is-link is-rounded' onClick={() => decreaseProduct(article.id)}>-</div>
+                          <div className='button is-link is-rounded' onClick={() => decreaseProduct(article)}>-</div>
                           <div className='mx-2'>{el.count}</div>
                         </div>
                       )
                     ))}
-                      <div className='button is-link is-rounded' onClick={() => addProduct(article.id)}>+</div>
+                      <div className='button is-link is-rounded' onClick={() => addProduct(article)}>+</div>
                     </div>
                   </div>
                 </div>
