@@ -1,6 +1,4 @@
 import Image from "next/image"
-import HeadApp from "../components/Head/HeadApp"
-import Button from '@mui/material/Button'
 import Layout from "../template/Layout"
 
 const logo = require('../assets/icons/logo.png')

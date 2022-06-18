@@ -1,13 +1,23 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import Layout from '../../template/Layout'
 import { Alert, AlertIcon } from '@chakra-ui/react'
+import { useCallback } from 'react'
+import { useStoreActions } from 'easy-peasy'
 
 export default function Articles({ articlesList }) {
 
   const [alert, setAlert] = useState(false)
+  const [panier, setPanier] = useState([])
 
+  // STORE
+  const cartActions = useStoreActions((actions) => actions.cart)
+
+  /**
+   * Au chargement :
+   * On check s'il y un localstorage pour ajout d'article
+   * Si c'est le cas on affiche une alert
+   */
   useEffect(() => {
     const addArtcile = localStorage.getItem('addArticle')
     if (addArtcile && addArtcile !== '') {
@@ -21,6 +31,71 @@ export default function Articles({ articlesList }) {
 
     return () => { clearTimeout(timer) };
   }, [])
+
+  /**
+   * Permet d'ajouter un produit au panier
+   */
+  const addProduct = useCallback(id => {
+    const newPanier = [...panier]
+    let update = false
+    if (newPanier.length > 0) {
+      newPanier.forEach((el, i) => {
+        if (el.id === id) {
+          const data = {
+            id,
+            count: el.count + 1
+          }
+          newPanier.splice(i, 1, data)
+          console.log('id ok', newPanier)
+          update = true
+        }
+      })
+
+      if (!update) {
+        newPanier.push({
+          id,
+          count: 1
+        })
+        console.log('add', newPanier)
+      }
+    } else {
+      newPanier.push({
+        id,
+        count: 1
+      })
+    }
+    setPanier(newPanier)
+
+     // Increment le total de produit et le met dans le store
+    cartActions.incrementCartCount()
+  })
+
+  /**
+   * Permet de supprimer un produit du panier
+   */
+  const decreaseProduct = useCallback((id) => {
+    const newPanier = [...panier]
+    newPanier.forEach((el, i) => {
+      if (el.id === id) {
+        if ((el.count - 1) === 0) {
+          newPanier.splice(i, 1)
+          console.log(newPanier)
+          console.log(i)
+        } else {
+          const data = {
+            id,
+            count: el.count - 1
+          }
+          newPanier.splice(i, 1, data)
+          console.log('id ok', newPanier)
+        }
+      }
+    })
+    setPanier(newPanier)
+
+    // Decrement le total de produit et le met dans le store
+    cartActions.decrementCartCount()
+  })
 
   return (
     <Layout head='Articles'>
@@ -75,10 +150,17 @@ export default function Articles({ articlesList }) {
                   </div>
                   <div className="mt-2 is-flex is-align-items-center">
                     <p className='m-0 is-size-3'>{article.price} €</p>
-                    <div className='ml-auto'>
-                      <Link href={'/'}>
-                        <a className='button is-link'>Détails</a>
-                      </Link>
+                    <div className='ml-auto is-flex is-align-items-center'>
+
+                    {panier.length > 0 && panier.map((el, index) => (
+                      el.id === article.id && (
+                        <div className="is-flex is-align-items-center" key={index}>
+                          <div className='button is-link is-rounded' onClick={() => decreaseProduct(article.id)}>-</div>
+                          <div className='mx-2'>{el.count}</div>
+                        </div>
+                      )
+                    ))}
+                      <div className='button is-link is-rounded' onClick={() => addProduct(article.id)}>+</div>
                     </div>
                   </div>
                 </div>

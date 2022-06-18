@@ -53,3 +53,14 @@ a {
   width: 100%;
   object-fit: contain;
 }
+
+.cart {
+  position: relative;
+}
+.badge {
+  position: absolute;
+  right: 35px;
+}
+.cursor-pointer {
+  cursor: pointer;
+}

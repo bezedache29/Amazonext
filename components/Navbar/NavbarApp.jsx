@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import Image from "next/image"
-import { Avatar, Menu, MenuButton, MenuItem, MenuList, useDisclosure, Wrap, WrapItem } from '@chakra-ui/react'
+import { Avatar, Menu, MenuButton, MenuItem, MenuList, useDisclosure, Icon, Badge } from '@chakra-ui/react'
 import { checkCookies, removeCookies } from 'cookies-next'
 import ModalApp from '../Modal/ModalApp'
+import { useStoreState } from 'easy-peasy'
 
 const logo = require('../../assets/icons/logo.png')
 
@@ -13,6 +14,9 @@ export default function Navbar() {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const cartStore = useStoreState((state) => state.cart)
+  const cartCount = cartStore.cartCount
+
   useEffect(() => {
     checkCookies('jwt') ? setIsConnected(true) : setIsConnected(false)
   })
@@ -20,7 +24,14 @@ export default function Navbar() {
   const logout = () => {
     onClose()
     removeCookies('jwt')
-    // Dispatch le user a vide
+  }
+
+  const openCart = () => {
+    if (cartCount === 0) {
+      console.log('Panier vide')
+    } else {
+      console.log('Nb de produits dans le panier ' + cartCount)
+    }
   }
 
   return (
@@ -73,7 +84,29 @@ export default function Navbar() {
 
           <div className="navbar-end">
             {isConnected ? (
-              <div className="mt-2 mr-3">
+              <div className="mt-2 mr-3 is-flex is-full is-align-items-center">
+                <Menu>
+                  <MenuButton>
+                  <div className="cart cursor-pointer" onClick={openCart}>
+                    <Icon viewBox='0 0 24 24' stroke="currentColor" className='mr-5' boxSize={10}>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </Icon>
+                    {cartCount > 0 && (
+                      <Badge variant='solid' colorScheme='red' className="badge">
+                        {cartCount}
+                      </Badge>
+                    )}
+                  </div>
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem>Article 1</MenuItem>
+                    <MenuItem>Article 2</MenuItem>
+                    <MenuItem>Article 3</MenuItem>
+                    <MenuItem>Article 4</MenuItem>
+                    <MenuItem>Total</MenuItem>
+                  </MenuList>
+                </Menu>
+                
                 <Menu>
                   <MenuButton>
                     <Avatar name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
