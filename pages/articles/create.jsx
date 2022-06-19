@@ -6,9 +6,11 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { checkCookies } from 'cookies-next'
 
 export default function Create() {
 
+  const [isConnected, setIsConnected] = useState(false)
   const [categories, setCategories] = useState([])
   const [selectedItems, setSelectedItems] = useState([])
 
@@ -23,9 +25,24 @@ export default function Create() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    getAllCategories()
+  /**
+   * Permet de check si le user est connecté
+   */
+   useEffect(() => {
+    if (checkCookies('jwt')) {
+      setIsConnected(true)
+    } else {
+      setIsConnected(false)
+    }
   }, [])
+
+  useEffect(() => {
+    if (isConnected) {
+      getAllCategories()
+    } else {
+      router.push('/auth/login')
+    }
+  }, [isConnected])
 
   // Permet de récupérer toutes les catégories 
   const getAllCategories = async () => {
@@ -159,34 +176,6 @@ export default function Create() {
       } catch (err) {
         console.log(err)
       }
-      // try {
-      //   const res = await fetch(`${process.env.REACT_APP_URL_API}/auth/register`, {
-      //     method: 'POST',
-      //     body: JSON.stringify(data),
-      //     headers: {
-      //       "content-type": "application/json"
-      //     }
-      //   })
-      //   const response = await res.json()
-      //   console.log(response)
-
-      //   setEmailError(false)
-      //   setPseudoError(false)
-        
-      //   if (response.message) {
-      //     if (response.message === "L'email existe déjà") {
-      //       setEmailError(response.message)
-      //     } else {
-      //       setPseudoError(response.message)
-      //     }
-      //   } else {
-      //     // resetForm()
-      //     // router.push('/auth/login')
-      //     console.log(response)
-      //   }
-      // } catch(err) {
-      //   console.log(err)
-      // }
     },
     validationSchema: yup.object({
       title: yup.string().min(5, "trop petit").max(40, "trop long!").required("Le titres est obligatoire"),
@@ -202,17 +191,12 @@ export default function Create() {
   const submitFormArticle = () => {
     setCategoriesError(false)
     let categoriesReadyToSubmit = false
-    // let imageReadyToSubmit = false
 
     if (selectedItems.length > 0) {
       categoriesReadyToSubmit = true
     } else {
       setCategoriesError('Veuillez choisir au moins une catégorie')
     }
-
-    // if (image) {
-    //   imageReadyToSubmit = true
-    // }
 
     if (categoriesReadyToSubmit) {
       console.log('ici')

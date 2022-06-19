@@ -42,6 +42,9 @@ model Role {
 model Address {
   id          Int        @id @default(autoincrement())
   createdAt   DateTime   @default(now())
+  name        String
+  lastname    String
+  firstname   String
   address     String
   city        String
   zipCode     Int

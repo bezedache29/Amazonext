@@ -20,6 +20,6 @@ export const cartStore = {
   }),
   addTotal: action((state, payload) => {
     state.total = payload
-  })
+  }),
 
 };

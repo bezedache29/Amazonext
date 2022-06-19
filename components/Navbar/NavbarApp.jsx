@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import NextImage from "next/image"
-import { Avatar, Menu, MenuButton, MenuItem, MenuList, useDisclosure, Icon, Badge, Image } from '@chakra-ui/react'
+import { Avatar, Menu, MenuButton, MenuItem, MenuList, useDisclosure, Icon, Badge, Image, useToast } from '@chakra-ui/react'
 import { checkCookies, removeCookies } from 'cookies-next'
 import ModalApp from '../Modal/ModalApp'
-import { useStoreState } from 'easy-peasy'
+import { useStoreState, useStoreActions } from 'easy-peasy'
 
 const logo = require('../../assets/icons/logo.png')
 
@@ -14,6 +14,11 @@ export default function Navbar() {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const toast = useToast()
+
+  // STORE
+  const userActions = useStoreActions((actions) => actions.user)
+  const cartActions = useStoreActions((actions) => actions.cart)
   const cartStore = useStoreState((state) => state.cart)
   const cartCount = cartStore.cartCount
   const cart = cartStore.cartList
@@ -26,6 +31,7 @@ export default function Navbar() {
   const logout = () => {
     onClose()
     removeCookies('jwt')
+    userActions.loadUser({})
   }
 
   const openCart = () => {
@@ -34,6 +40,21 @@ export default function Navbar() {
     } else {
       console.log('Nb de produits dans le panier ' + cartCount)
     }
+  }
+
+  const deleteCart = () => {
+    cartActions.loadCount(0)
+    cartActions.loadCart([])
+    cartActions.addTotal(0)
+    localStorage.removeItem('cart')
+    localStorage.removeItem('total')
+    toast({
+      title: `Votre panier a bien été vidé !`,
+      description: `Vous pouvez ajouter de nouveaux articles a l'intérieur`,
+      status: 'success',
+      duration: 4000,
+      isClosable: true,
+    })
   }
 
   return (
@@ -102,7 +123,7 @@ export default function Navbar() {
                   </MenuButton>
                   <MenuList>
                   { cart.length > 0 ? cart.map(article => (
-                    <MenuItem minH='48px'>
+                    <MenuItem minH='48px' key={article.id}>
                       <div className="is-flex is-align-items-center w-100">
                         <div className="is-flex is-align-items-center">
                           <Image
@@ -134,8 +155,15 @@ export default function Navbar() {
                       <div className="is-flex is-justify-content-flex-end">
                         <p className="m-3 is-size-4 has-text-weight-bold">Total : {total} €</p>
                       </div>
+                      <hr className="navbar-divider" />
                       <div className="is-flex is-justify-content-flex-end">
+                        <p className="m-0 mr-3 is-underlined cursor-pointer" onClick={deleteCart}>Vider le panier</p>
+                      </div>
+                      <hr className="navbar-divider" />
+                      <div className="is-flex is-justify-content-flex-end">
+                      <Link href='/cart'>
                         <button className="button is-link mr-3">Voir le panier</button>
+                      </Link>
                       </div>
                     </>
                   )}

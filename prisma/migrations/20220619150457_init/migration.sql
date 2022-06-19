@@ -31,6 +31,9 @@ CREATE TABLE `Role` (
 CREATE TABLE `Address` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `name` VARCHAR(191) NOT NULL,
+    `lastname` VARCHAR(191) NOT NULL,
+    `firstname` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
     `city` VARCHAR(191) NOT NULL,
     `zipCode` INTEGER NOT NULL,

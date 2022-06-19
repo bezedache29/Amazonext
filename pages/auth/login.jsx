@@ -6,12 +6,16 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useRouter } from 'next/router'
 import { setCookies } from 'cookies-next'
+import { useStoreActions } from 'easy-peasy'
 
 export default function Register() {
 
   const [error, setError] = useState(false)
 
   const router = useRouter()
+
+  // STORE
+  const userActions = useStoreActions((actions) => actions.user)
 
   const formik = useFormik({
     initialValues: {
@@ -43,6 +47,7 @@ export default function Register() {
         } else {
           resetForm()
           setCookies('jwt', response.token)
+          userActions.loadUser(response.user)
           router.push('/articles')
         }
       } catch(err) {

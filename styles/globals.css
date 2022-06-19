@@ -46,6 +46,9 @@ a {
 .mt-150 {
   margin-top: 150px!important;
 }
+.mt--20 {
+  margin-top: -40px!important;
+}
 .w-100 {
   width: 100%!important;
 }
@@ -62,7 +65,10 @@ a {
   width: 100%;
   object-fit: contain;
 }
+.card-perso:hover .card {
+  background-color: #ebeef9!important;
 
+}
 .cart {
   position: relative;
 }
@@ -79,6 +85,27 @@ a {
 .card-content {
   height: 100%!important;
 }
-.content {
-  height: 184px;
+.content-perso {
+  height: 184px!important;
+}
+.btn-plus {
+  padding-left: 13px!important;
+  padding-right: 13px!important;
+}
+.btn-moins {
+  padding-left: 15px!important;
+  padding-right: 15px!important;
+}
+.image-cart {
+  margin:0;
+  width: 70px;
+  overflow: hidden;
+}
+.img-cart {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+.br-3 {
+  border-radius: 3px;
 }
