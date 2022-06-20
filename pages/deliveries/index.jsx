@@ -4,6 +4,7 @@ import { useStoreActions, useStoreState } from 'easy-peasy'
 import React, { useState, useEffect } from 'react'
 import HeaderApp from '../../components/Head/HeadApp.jsx'
 import ModalAddress from '../../components/Modal/ModalAddress.jsx'
+import { useRouter } from 'next/router';
 
 const jwt = require('jsonwebtoken')
 
@@ -11,6 +12,9 @@ export default function Deliveries() {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const router = useRouter()
+
+  const cartActions = useStoreActions((actions) => actions.cart)
   const userActions = useStoreActions((actions) => actions.user)
   const userStore = useStoreState((state) => state.user)
   const user = userStore.user
@@ -54,6 +58,12 @@ export default function Deliveries() {
     console.log('add address')
   }
 
+  const addressSelected = (address) => {
+    cartActions.loadAddress(address)
+    localStorage.setItem('address', JSON.stringify(address))
+    router.push('/cart/summary')
+  }
+
   return (
     <>
       <HeaderApp title='Adresse de livraison' />
@@ -63,13 +73,13 @@ export default function Deliveries() {
         <p className='my-5'>Sélectionnez ci-dessous l'adresse de votre choix en cliquant sur le bouton « Livrer à cette acdresse » correspondant ou <span className="is-underlined has-text-link cursor-pointer">entrez une nouvelle adresse.</span></p>
 
         { addresses.length > 0 ? addresses.map(address => (
-          <div className="column is-one-quarter card-perso my-2 is-flex is-flex-direction-column box">
-            <p className="has-background-link has-text-light has-text-centered br-3">Title</p>
-            <p>{user.lastename} {user.firstname}</p>
-            <p>{address.address}</p>
-            <p>{address.zipCode} {address.city}</p>
-            <button className='button is-link'>Livrer a cette adresse</button>
-            <button className='button is-danger'>Supprimer cette adresse</button>
+          <div className="column is-one-quarter card-address my-2 is-flex is-flex-direction-column box" key={address.id}>
+            <p className="has-background-primary has-text-light has-text-centered br-3 py-2 is-size-4 has-text-weight-bold">Title</p>
+            <p className='mt-3'>{user.lastename} {user.firstname}</p>
+            <p className='is-size-5'>{address.address}</p>
+            <p className='mb-3 is-size-5'>{address.zipCode} {address.city}</p>
+            <button className='button is-link mt-2 mb-1' onClick={() => addressSelected(address)}>Livrer a cette adresse</button>
+            <button className='button is-danger mb-2 mt-1'>Supprimer cette adresse</button>
           </div>
         )) : (
           <div className='is-flex is-flex-direction-column is-align-content-center column is-half mx-auto box mt-80'>

@@ -5,6 +5,7 @@ export const cartStore = {
   cartList: [],
   cartCount: 0,
   total: 0,
+  address: {},
 
   loadCount: action((state, payload) => {
     state.cartCount = payload
@@ -21,5 +22,8 @@ export const cartStore = {
   addTotal: action((state, payload) => {
     state.total = payload
   }),
+  loadAddress: action((state, payload) => {
+    state.address = payload
+  })
 
 };

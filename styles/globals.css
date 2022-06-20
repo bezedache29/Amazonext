@@ -65,6 +65,9 @@ a {
   width: 100%;
   object-fit: contain;
 }
+.card-address {
+  border: 1px solid #3e57c43e!important;
+}
 .card-perso:hover .card {
   background-color: #ebeef9!important;
 
