@@ -1,15 +1,53 @@
 import { useStoreActions, useStoreState } from 'easy-peasy'
 import Link from 'next/link.js'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import HeaderApp from '../../components/Head/HeadApp.jsx'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements } from "@stripe/react-stripe-js"
+import { v4 as uuidv4 } from 'uuid'
+import CheckoutForm from './component/CheckoutForm.jsx'
+
+// Make sure to call loadStripe outside of a component’s render to avoid
+// recreating the Stripe object on every render.
+// This is your test publishable API key.
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function summary() {
+
+  const [clientSecret, setClientSecret] = useState("");
 
   const cartActions = useStoreActions((actions) => actions.cart)
   const cartStore = useStoreState((state) => state.cart)
   const cart = cartStore.cartList
   const total = cartStore.total
   const address = cartStore.address
+
+  const order = {
+    id: uuidv4(),
+    total,
+    address,
+    cart
+  }
+
+  useEffect(() => {
+    // Create PaymentIntent as soon as the page loads
+    fetch("/api/stripe/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: [{ id: "xl-tshirt" }] }),
+    })
+      .then((res) => res.json())
+      .then((data) => setClientSecret(data.clientSecret));
+  }, []);
+
+  const appearance = {
+    theme: 'stripe',
+  };
+  const options = {
+    clientSecret,
+    appearance,
+  };
+
 
   useEffect(() => {
     const cartStorage = localStorage.getItem('cart')
@@ -22,8 +60,23 @@ export default function summary() {
     }
   }, [])
 
-  const GoToStripe = () => {
-    console.log('go to stripe')
+  const goToStripe = async () => {
+    const formdata = new FormData()
+    formdata.append('id', uuidv4())
+    formdata.append('total', Number(total))
+    formdata.append('address', address)
+    formdata.append('cart', cart)
+
+    try {
+      const res = await fetch(`${process.env.REACT_APP_URL_API}/stripe/checkout_sessions`, {
+        method: 'POST',
+        body: formdata
+      })
+      const response = await res.json()
+      console.log(response)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
@@ -62,10 +115,16 @@ export default function summary() {
           </div>
           <div className="column is-flex is-flex-direction-column">
             <div className="column">
-              <div className="box is-flex is-flex-direction-column">
+              {/* <div className="box is-flex is-flex-direction-column">
                 <p className='has-text-centered	is-size-5 mb-3'>Sous-Total : <span className='is-size-4 has-text-weight-bold'>{total} €</span></p>
-                <button className="button is-link" onClick={GoToStripe}>Valider et Payer</button>
-              </div>
+                <input type="hidden" value={total} name="total" />
+                <button className="button is-link" onClick={goToStripe}>Valider et Payer</button>
+              </div> */}
+              {clientSecret && (
+                <Elements options={options} stripe={stripePromise}>
+                  <CheckoutForm />
+                </Elements>
+              )}
             </div>
             <div className="column">
             <div className="box is-flex is-flex-direction-column">
